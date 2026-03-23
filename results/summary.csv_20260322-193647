@@ -1,0 +1,2 @@
+run_id,params,metrics,score
+e52d49e1,"{""n_components"": 3, ""covariance_type"": ""diag"", ""xgb_params"": {""max_depth"": 5, ""learning_rate"": 0.05}}","{""sharpe"": -0.1913777767396165, ""sortino"": -0.02956113429683668, ""calmar"": 1.244762175447748, ""max_drawdown"": -0.05481475010945007, ""cagr"": -0.0011951730117358182, ""profit_factor"": 1.8667315951736478, ""expectancy"": 24.394727050321055, ""win_rate"": 0.550003628762929, ""num_trades"": 18.181818181818183}",3.0065367313972717

@@ -1,0 +1,5 @@
+hmmlearn
+scikit-learn
+matplotlib
+mplfinance
+xgboost

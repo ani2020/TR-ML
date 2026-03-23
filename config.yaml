@@ -1,0 +1,12 @@
+backtest:
+  capital: 100000
+  cost: 0.0005
+  slippage: 0.0005
+
+metrics:
+  weights:
+    sharpe: 0.25
+    sortino: 0.25
+    calmar: 0.2
+    profit_factor: 0.2
+    expectancy: 0.1
