@@ -1,25 +1,33 @@
 import numpy as np
 
-import numpy as np
-
 def extract_trades(df):
     trades = []
     position = 0
-    entry_price = 0.0
+    entry_price = None
 
     for i in range(len(df)):
-        current_price = float(df["close"].iloc[i])  # force float
+        current_pos = df["position"].iloc[i]
+        price = float(df["close"].iloc[i])
 
-        if position == 0 and df["position"].iloc[i] != 0:
-            position = df["position"].iloc[i]
-            entry_price = current_price
+        # ENTRY
+        if position == 0 and current_pos != 0:
+            position = current_pos
+            entry_price = price
 
-        elif position != 0 and df["position"].iloc[i] == 0:
-            exit_price = current_price
+        # EXIT
+        elif position != 0 and current_pos == 0:
+            pnl = position * (price - entry_price)
+            trades.append(pnl)
+            position = 0
+            entry_price = None
 
-            pnl = position * (exit_price - entry_price)
+        # FLIP (IMPORTANT FIX)
+        elif position != 0 and current_pos != position:
+            pnl = position * (price - entry_price)
             trades.append(pnl)
 
-            position = 0
+            # new position
+            position = current_pos
+            entry_price = price
 
     return np.array(trades)

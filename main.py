@@ -21,6 +21,23 @@ df["low"] = df["low"].apply(pd.to_numeric, errors="coerce")
 df["returns"] = pd.to_numeric(df["returns"], errors="coerce")
 df["volatility"] = pd.to_numeric(df["volatility"], errors="coerce")
 
+# df["return_1"] = pd.to_numeric(df["return_1"], errors="coerce")
+# df["return_3"] = pd.to_numeric(df["return_3"], errors="coerce")
+# df["return_5"] = pd.to_numeric(df["return_5"], errors="coerce")
+
+# df["momentum_5"] = pd.to_numeric(df["momentum_5"], errors="coerce")
+# df["momentum_10"] = pd.to_numeric(df["momentum_10"], errors="coerce")
+
+# df["ma_10"] = pd.to_numeric(df["ma_10"], errors="coerce")
+# df["ma_20"] = pd.to_numeric(df["ma_20"], errors="coerce")
+# df["ma_ratio"] = pd.to_numeric(df["ma_ratio"], errors="coerce")
+# df["price_ma_ratio"] = pd.to_numeric(df["price_ma_ratio"], errors="coerce")
+# df["zscore"] = pd.to_numeric(df["zscore"], errors="coerce")
+# df["rsi"] = pd.to_numeric(df["rsi"], errors="coerce")
+
+# df["volatility_5"] = pd.to_numeric(df["volatility_5"], errors="coerce")
+# df["volatility_10"] = pd.to_numeric(df["volatility_10"], errors="coerce")
+
 validate_dataframe(df, "input data")
 
 wf = WalkForward(

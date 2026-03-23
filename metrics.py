@@ -43,7 +43,12 @@ def compute_metrics(df, trades):
     else:
         profits = trades[trades > 0].sum()
         losses = abs(trades[trades < 0].sum())
-        profit_factor = profits / losses if losses != 0 else 0
+        if losses == 0 and profits > 0:
+            profit_factor = np.inf
+        elif losses == 0:
+            profit_factor = 0
+        else:
+            profit_factor = profits / losses
 
     # --- Expectancy ---
     if len(trades) == 0:
@@ -60,9 +65,15 @@ def compute_metrics(df, trades):
 
         expectancy = (win_rate * avg_win) + ((1 - win_rate) * avg_loss)
 
-    print("Returns std:", returns.std())
+    print("Sample trades:", trades[:10])
     print("Num trades:", len(trades))
+    print("Wins:", len(trades[trades > 0]))
+    print("Losses:", len(trades[trades < 0]))
 
+    print("Trades:", trades[:10])
+    print("Num trades:", len(trades))
+    print("Returns std:", returns.std())
+    
     return {
         "sharpe": sharpe,
         "sortino": sortino,

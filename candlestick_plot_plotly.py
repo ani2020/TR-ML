@@ -44,15 +44,19 @@ def plot_candlestick_with_signals(df, title="Candlestick with Signals"):
 
     # Add buy signals
     fig.add_trace(go.Scatter(x=long_entries['date'], y=long_entries['close'], mode='markers', 
-                             marker=dict(symbol='triangle-up', size=10, color='green'), name='long_entries'))
-    fig.add_trace(go.Scatter(x=short_exits['date'], y=short_exits['close'], mode='markers', 
-                             marker=dict(symbol='triangle-up', size=10, color='cyan'), name='short_exits'))
+                             marker=dict(symbol='star-triangle-up', size=10, color='green'), name='long_entries'))
+    fig.add_trace(go.Scatter(x=short_entries['date'], y=short_entries['close'], mode='markers', 
+                             marker=dict(symbol='star-triangle-down', size=15, color='darkgreen'), name='flip-short_entries-long-exit'))
+    fig.add_trace(go.Scatter(x=short_entries['date'], y=short_entries['close'], mode='markers', 
+                             marker=dict(symbol='triangle-down-open', size=10, color='skyblue'), name='short_entries'))
     
     # Add sell signals
-    fig.add_trace(go.Scatter(x=short_entries['date'], y=short_entries['close'], mode='markers', 
-                             marker=dict(symbol='triangle-down', size=10, color='blue'), name='short_entries'))
     fig.add_trace(go.Scatter(x=long_exits['date'], y=long_exits['close'], mode='markers', 
-                             marker=dict(symbol='triangle-down', size=10, color='red'), name='long_exits'))
+                             marker=dict(symbol='star-triangle-down', size=10, color='red'), name='long_exits'))
+    fig.add_trace(go.Scatter(x=short_exits['date'], y=short_exits['close'], mode='markers', 
+                             marker=dict(symbol='star-triangle-up', size=15, color='pink'), name='flip-short_exits-long-entry'))
+    fig.add_trace(go.Scatter(x=short_exits['date'], y=short_exits['close'], mode='markers', 
+                             marker=dict(symbol='triangle-up-open', size=10, color='cyan'), name='short_exits'))
     
     # Update layout with the new specifications
     fig.update_layout(

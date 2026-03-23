@@ -2,6 +2,19 @@ from hmm_model import HMMModel
 from validation import validate_dataframe
 from xgboost_model import XGBoostModel
 import numpy as np
+import pandas as pd
+
+def compute_prediction_accuracy(df):
+    df = df.copy()
+
+    df["actual"] = (df["returns"].shift(-1) > 0).astype(int)
+    df["pred"] = (df["signal"] == 1).astype(int)
+
+    df = df.dropna()
+
+    accuracy = (df["actual"] == df["pred"]).mean()
+
+    return accuracy
 
 def hmm_xgb_pipeline(train_df, test_df, params):
 
@@ -55,6 +68,13 @@ def hmm_xgb_pipeline(train_df, test_df, params):
 
     validate_dataframe(test_df, "test data")
 
+    #print("XGB feature importances:")
+
+    #print(xgb_model.model.feature_importances_)
+
+    acc = compute_prediction_accuracy(test_df)
+    print("Prediction Accuracy:", acc)
+
     assert train_df["date"].max() < test_df["date"].min(), \
     "Lookahead bias detected!"
 
@@ -65,12 +85,19 @@ def hmm_xgb_pipeline(train_df, test_df, params):
 def random_signal_pipeline(train_df, test_df, params):
     test_df = test_df.copy()
 
-    np.random.seed(42)  # reproducible
+    np.random.seed(42)
 
-    test_df["signal"] = np.random.choice(
-        [-1, 0, 1],
-        size=len(test_df)
+    # generate less frequent changes
+    signals = np.random.choice([-1, 1], size=len(test_df))
+
+    # smooth signals → reduce flipping
+    test_df["signal"] = pd.Series(signals).rolling(3).mean().apply(
+        lambda x: 1 if x > 0 else -1
+    
     )
+    # --- XGBoost ---
+    acc = compute_prediction_accuracy(test_df)
+    print("Prediction Accuracy:", acc)
 
     return test_df
 
@@ -86,8 +113,28 @@ def perfect_foresight_pipeline(train_df, test_df, params):
 
     # drop last row (NaN target)
     test_df = test_df.dropna().reset_index(drop=True)
+    # --- XGBoost ---
+    acc = compute_prediction_accuracy(test_df)
+    print("Prediction Accuracy:", acc)
 
     return test_df
+
+def true_perfect_foresight_pipeline(train_df, test_df, params):
+    test_df = test_df.copy()
+
+    future_return = test_df["returns"].shift(-1)
+
+    # DIRECTLY use position (no shift effect)
+    test_df["signal"] = 0
+    test_df.loc[future_return > 0, "signal"] = 1
+    test_df.loc[future_return < 0, "signal"] = -1
+
+    # REMOVE shift effect temporarily
+    test_df["position"] = test_df["signal"]
+    acc = compute_prediction_accuracy(test_df)
+    print("Prediction Accuracy:", acc)
+
+    return test_df.dropna()
 
 # def simple_pipeline(train_df, test_df, params):
 #     # Example: momentum strategy

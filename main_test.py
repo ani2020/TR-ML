@@ -3,6 +3,7 @@ from walk_forward import WalkForward
 from signal_generator import hmm_xgb_pipeline
 from signal_generator import random_signal_pipeline
 from signal_generator import perfect_foresight_pipeline
+from signal_generator import true_perfect_foresight_pipeline
 from scoring import compute_score
 from plot_signals import plot_signals
 #from candlestick_plot import plot_candlestick_with_signals
@@ -46,8 +47,12 @@ result = wf.run(
 )
 
 metrics = result["metrics"]
+df_plot = result["full_data"].copy()
+df_plot["position"] = df_plot["signal"].shift(1).fillna(0)
+df_plot["trade_signal"] = df_plot["position"].diff().fillna(0)
 
 print("Random Test Metrics:", metrics)
+print(df_plot["trade_signal"].value_counts())
 
 result = wf.run(
     df=df,
@@ -56,5 +61,24 @@ result = wf.run(
 )
 
 metrics = result["metrics"]
+df_plot = result["full_data"].copy()
+df_plot["position"] = df_plot["signal"].shift(1).fillna(0)
+df_plot["trade_signal"] = df_plot["position"].diff().fillna(0)
+
 
 print("Perfect Foresight Metrics:", metrics)
+print(df_plot["trade_signal"].value_counts())
+
+result = wf.run(
+    df=df,
+    pipeline_fn=true_perfect_foresight_pipeline,
+    params={}
+)
+
+metrics = result["metrics"]
+df_plot = result["full_data"].copy()
+df_plot["position"] = df_plot["signal"].shift(1).fillna(0)
+df_plot["trade_signal"] = df_plot["position"].diff().fillna(0)
+
+print("True Perfect Foresight Metrics:", metrics)
+print(df_plot["trade_signal"].value_counts())

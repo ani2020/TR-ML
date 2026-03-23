@@ -30,11 +30,26 @@ class XGBoostModel:
         df = df.dropna()
 
         # --- Features ---
+        # exclude_cols = [
+        #     "date",
+        #     "target",
+        #     "signal",
+        #     "regime",
+        #     "state",
+        #     "position",
+        #     "trade_signal",
+        #     "equity"
+        # ]
+
+        # feature_cols = [
+        #     col for col in df.columns
+        #     if col not in exclude_cols and df[col].dtype != "object"
+        # ]
         feature_cols = [
             "returns",
             "volatility",
             "momentum",
-        ]
+        ] 
 
         # Add HMM probabilities if available
         prob_cols = [col for col in df.columns if "state_prob" in col]
@@ -62,3 +77,4 @@ class XGBoostModel:
         df["xgb_signal"] = (probs > 0.5).astype(int)
 
         return df
+    

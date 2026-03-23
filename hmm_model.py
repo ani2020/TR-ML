@@ -14,15 +14,32 @@ class HMMModel:
         self.scaler = StandardScaler()
 
     def _prepare_features(self, df):
-        df = df[["returns", "volatility"]].copy()
+        """
+        Select features for HMM (controlled set)
+        """
 
-        # Drop NaNs safely
-        df = df.dropna()
+        feature_cols = [
+            "returns",
+            "volatility",
+            "momentum",
+            "zscore"
+        ]
 
-        if df.empty:
+        # fallback if missing
+        feature_cols = [col for col in feature_cols if col in df.columns]
+
+        if len(feature_cols) == 0:
+            raise ValueError("No valid HMM features found")
+
+        feature_df = df[feature_cols].copy()
+
+        # drop NaNs
+        feature_df = feature_df.dropna()
+
+        if feature_df.empty:
             raise ValueError("No valid data after removing NaNs for HMM")
 
-        features_scaled = self.scaler.fit_transform(df.values)
+        features_scaled = self.scaler.fit_transform(feature_df.values)
 
         return features_scaled
 
@@ -41,7 +58,15 @@ class HMMModel:
     def predict(self, df):
         df = df.copy()
 
-        feature_df = df[["returns", "volatility"]].copy()
+        feature_cols = [
+            "returns",
+            "volatility",
+            "momentum"
+        ]
+
+        feature_cols = [col for col in feature_cols if col in df.columns]
+
+        feature_df = df[feature_cols].copy()
 
         valid_idx = feature_df.dropna().index
 

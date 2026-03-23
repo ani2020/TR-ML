@@ -1,3 +1,4 @@
+import pandas as pd
 
 def enforce_numeric(df, columns):
     for col in columns:
