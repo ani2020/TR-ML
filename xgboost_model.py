@@ -25,7 +25,7 @@ class XGBoostModel:
         df = df.copy()
 
         # --- Target ---
-        df["target"] = (df["returns"].shift(-1) > 0).astype(int)
+        df["target"] = (df["return_1"].shift(-1) > 0).astype(int)
 
         df = df.dropna()
 
@@ -46,9 +46,19 @@ class XGBoostModel:
         #     if col not in exclude_cols and df[col].dtype != "object"
         # ]
         feature_cols = [
-            "returns",
-            "volatility",
-            "momentum",
+            "return_1",
+            #"return_3",
+            #"return_5",
+            "momentum_5",
+            "momentum_10",
+            "volatility_5",
+            "volatility_10",
+            "ma_10",
+            "ma_20",
+            "ma_ratio",
+            "price_ma_ratio",
+            "zscore",
+            "rsi"
         ] 
 
         # Add HMM probabilities if available

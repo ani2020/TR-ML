@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from walk_forward import WalkForward
 #from signal_generator import hmm_pipeline
 from signal_generator import hmm_xgb_pipeline
@@ -19,24 +21,24 @@ df["high"] = df["high"].apply(pd.to_numeric, errors="coerce")
 df["low"] = df["low"].apply(pd.to_numeric, errors="coerce")
 
 df["returns"] = pd.to_numeric(df["returns"], errors="coerce")
-df["volatility"] = pd.to_numeric(df["volatility"], errors="coerce")
+# df["volatility"] = pd.to_numeric(df["volatility"], errors="coerce")
 
-# df["return_1"] = pd.to_numeric(df["return_1"], errors="coerce")
-# df["return_3"] = pd.to_numeric(df["return_3"], errors="coerce")
-# df["return_5"] = pd.to_numeric(df["return_5"], errors="coerce")
+df["return_1"] = pd.to_numeric(df["return_1"], errors="coerce")
+df["return_3"] = pd.to_numeric(df["return_3"], errors="coerce")
+df["return_5"] = pd.to_numeric(df["return_5"], errors="coerce")
 
-# df["momentum_5"] = pd.to_numeric(df["momentum_5"], errors="coerce")
-# df["momentum_10"] = pd.to_numeric(df["momentum_10"], errors="coerce")
+df["momentum_5"] = pd.to_numeric(df["momentum_5"], errors="coerce")
+df["momentum_10"] = pd.to_numeric(df["momentum_10"], errors="coerce")
 
-# df["ma_10"] = pd.to_numeric(df["ma_10"], errors="coerce")
-# df["ma_20"] = pd.to_numeric(df["ma_20"], errors="coerce")
-# df["ma_ratio"] = pd.to_numeric(df["ma_ratio"], errors="coerce")
-# df["price_ma_ratio"] = pd.to_numeric(df["price_ma_ratio"], errors="coerce")
-# df["zscore"] = pd.to_numeric(df["zscore"], errors="coerce")
-# df["rsi"] = pd.to_numeric(df["rsi"], errors="coerce")
+df["ma_10"] = pd.to_numeric(df["ma_10"], errors="coerce")
+df["ma_20"] = pd.to_numeric(df["ma_20"], errors="coerce")
+df["ma_ratio"] = pd.to_numeric(df["ma_ratio"], errors="coerce")
+df["price_ma_ratio"] = pd.to_numeric(df["price_ma_ratio"], errors="coerce")
+df["zscore"] = pd.to_numeric(df["zscore"], errors="coerce")
+df["rsi"] = pd.to_numeric(df["rsi"], errors="coerce")
 
-# df["volatility_5"] = pd.to_numeric(df["volatility_5"], errors="coerce")
-# df["volatility_10"] = pd.to_numeric(df["volatility_10"], errors="coerce")
+df["volatility_5"] = pd.to_numeric(df["volatility_5"], errors="coerce")
+df["volatility_10"] = pd.to_numeric(df["volatility_10"], errors="coerce")
 
 validate_dataframe(df, "input data")
 
@@ -61,6 +63,8 @@ result = wf.run(
     params=params
 )
 
+
+
 metrics = result["metrics"]
 score = compute_score(metrics)
 
@@ -68,10 +72,13 @@ print("Metrics:", metrics)
 print("Score:", score)
 
 df_plot = result["full_data"].copy()
+time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+results_df_file = f"results/full_data_df_{time_stamp}.csv"
+df_plot.to_csv(results_df_file)
 
 print(f"signal sanity check (only -1, 0, 1): {df_plot["signal"].value_counts()}")
 print(f"signal transition check: {print(df_plot["signal"].diff().value_counts())}")
-print(df_plot[["returns", "position", "net_return"]].head(20))
+print(df_plot[["return_1", "position", "net_return"]].head(20))
 
 df_plot["date"] = pd.to_datetime(df_plot["date"], format="%Y-%m-%d")
 

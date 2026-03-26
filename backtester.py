@@ -13,7 +13,7 @@ class Backtester:
         df["position"] = df["signal"].shift(1).fillna(0)
 
         # strategy returns
-        df["strategy_return"] = df["position"] * df["returns"]
+        df["strategy_return"] = df["position"] * df["return_1"]
 
         # costs applied on position change
         df["trade"] = df["position"].diff().abs()

@@ -35,9 +35,13 @@ class GridSearchOptimizer:
                 metrics = result["metrics"]
                 score = compute_score(metrics)
 
+
                 run_id = str(uuid.uuid4())[:8]
 
                 time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+                #df_fdata = result["full_data"].copy()
+                results_df_file = f"results/full_data_df_{run_id}_{time_stamp}.csv"
+                #df_fdata.to_csv(results_df_file)
 
 
                 log_results(
@@ -45,7 +49,7 @@ class GridSearchOptimizer:
                     params=params,
                     metrics=metrics,
                     score=score,
-                    file_path=f"{results_file}_{time_stamp}"
+                    file_path=f"{results_file}"
                 )
 
                 row = {

@@ -19,9 +19,9 @@ class HMMModel:
         """
 
         feature_cols = [
-            "returns",
-            "volatility",
-            "momentum",
+            "return_1",
+            "volatility_10",
+            "momentum_10",
             "zscore"
         ]
 
@@ -59,9 +59,10 @@ class HMMModel:
         df = df.copy()
 
         feature_cols = [
-            "returns",
-            "volatility",
-            "momentum"
+            "return_1",
+            "volatility_10",
+            "momentum_10",
+            "zscore"
         ]
 
         feature_cols = [col for col in feature_cols if col in df.columns]
@@ -96,16 +97,16 @@ class HMMModel:
         Assign meaning to states based on stats
         """
         state_summary = df.groupby("state").agg({
-            "returns": "mean",
-            "volatility": "mean"
+            "return_1": "mean",
+            "volatility_10": "mean"
         })
 
         mapping = {}
 
         for state, row in state_summary.iterrows():
-            if row["returns"] > 0 and row["volatility"] < state_summary["volatility"].mean():
+            if row["return_1"] > 0 and row["volatility_10"] < state_summary["volatility_10"].mean():
                 mapping[state] = "bull"
-            elif row["returns"] < 0 and row["volatility"] > state_summary["volatility"].mean():
+            elif row["return_1"] < 0 and row["volatility_10"] > state_summary["volatility_10"].mean():
                 mapping[state] = "bear"
             else:
                 mapping[state] = "sideways"
@@ -119,18 +120,18 @@ class HMMModel:
         Derive regime labels using TRAIN data only
         """
         state_summary = df.groupby("state").agg({
-            "returns": "mean",
-            "volatility": "mean"
+            "return_1": "mean",
+            "volatility_10": "mean"
         })
 
         mapping = {}
 
-        vol_mean = state_summary["volatility"].mean()
+        vol_mean = state_summary["volatility_10"].mean()
 
         for state, row in state_summary.iterrows():
-            if row["returns"] > 0 and row["volatility"] < vol_mean:
+            if row["return_1"] > 0 and row["volatility_10"] < vol_mean:
                 mapping[state] = "bull"
-            elif row["returns"] < 0 and row["volatility"] > vol_mean:
+            elif row["return_1"] < 0 and row["volatility_10"] > vol_mean:
                 mapping[state] = "bear"
             else:
                 mapping[state] = "sideways"
