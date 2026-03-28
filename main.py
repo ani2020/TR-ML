@@ -3,7 +3,7 @@ from datetime import datetime
 from walk_forward import WalkForward
 #from signal_generator import hmm_pipeline
 from signal_generator import hmm_xgb_pipeline
-from signal_generator import random_signal_pipeline
+#from signal_generator import random_signal_pipeline
 from scoring import compute_score
 from plot_signals import plot_signals
 #from candlestick_plot import plot_candlestick_with_signals
@@ -63,28 +63,26 @@ result = wf.run(
     params=params
 )
 
-
-
-metrics = result["metrics"]
+metrics = result[0]["metrics"]
 score = compute_score(metrics)
 
 print("Metrics:", metrics)
 print("Score:", score)
 
-df_plot = result["full_data"].copy()
-time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-results_df_file = f"results/full_data_df_{time_stamp}.csv"
-df_plot.to_csv(results_df_file)
+# df_plot = result["full_data"].copy()
+# time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+# results_df_file = f"results/full_data_df_{time_stamp}.csv"
+# df_plot.to_csv(results_df_file)
 
-print(f"signal sanity check (only -1, 0, 1): {df_plot["signal"].value_counts()}")
-print(f"signal transition check: {print(df_plot["signal"].diff().value_counts())}")
-print(df_plot[["return_1", "position", "net_return"]].head(20))
+# print(f"signal sanity check (only -1, 0, 1): {df_plot["signal"].value_counts()}")
+# print(f"signal transition check: {print(df_plot["signal"].diff().value_counts())}")
+# print(df_plot[["return_1", "position", "net_return"]].head(20))
 
-df_plot["date"] = pd.to_datetime(df_plot["date"], format="%Y-%m-%d")
+# df_plot["date"] = pd.to_datetime(df_plot["date"], format="%Y-%m-%d")
 
-df_plot = df_plot.sort_values("date").reset_index(drop=True)
-df_plot = df_plot.drop_duplicates(subset=["date"], keep="last")
-df_plot = df_plot.reset_index(drop=True)
-#df_plot = df_plot.tail(500)
-#plot_signals(df_plot)
-plot_candlestick_with_signals(df_plot)
+# df_plot = df_plot.sort_values("date").reset_index(drop=True)
+# df_plot = df_plot.drop_duplicates(subset=["date"], keep="last")
+# df_plot = df_plot.reset_index(drop=True)
+# #df_plot = df_plot.tail(500)
+# #plot_signals(df_plot)
+# plot_candlestick_with_signals(df_plot)

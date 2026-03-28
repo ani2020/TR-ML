@@ -1,14 +1,8 @@
 import pandas as pd
-import json
 import os
 
-def log_results(run_id, params, metrics, score, file_path="results/summary.csv"):
-    row = {
-        "run_id": run_id,
-        "params": json.dumps(params),
-        "metrics": json.dumps(metrics),
-        "score": score
-    }
+
+def log_results(row, file_path):
 
     df = pd.DataFrame([row])
 
