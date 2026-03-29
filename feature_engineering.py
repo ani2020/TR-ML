@@ -1,6 +1,8 @@
 import pandas as pd
 import pandas_ta as ta
 import numpy as np
+from garch_model import GARCHModel
+from datetime import datetime
 
 
 def add_features(df):
@@ -61,9 +63,22 @@ def add_features(df):
     df.ta.atr(append=True)
     df = df.rename(columns={"ATRr_14": "atrr_14"})
 
+    # --- GARCH VOLATILITY ---
+    garch = GARCHModel()
+
+    df = garch.fit_predict(df)
+
+    # fallback if NaN
+    df["garch_vol"] = df["garch_vol"].fillna(df["volatility_10"])
+
+    # volatility change
+    df["garch_vol_change"] = df["garch_vol"] - df["volatility_10"]
+
+    # volatility ratio
+    df["vol_ratio"] = df["garch_vol"] / (df["volatility_10"] + 1e-9)
+
     df = df.replace([np.inf, -np.inf], np.nan)
     df = df.dropna().reset_index(drop=False)
-
 
     # --- CLEAN ---
     df = df.replace([np.inf, -np.inf], np.nan)
@@ -121,8 +136,25 @@ def add_select_features(df, config=None):
         df.ta.atr(append=True)
         df = df.rename(columns={"ATRr_14": "atrr_14"})
 
+    # --- GARCH VOLATILITY ---
+    if use.get("garch", True):
+
+        garch = GARCHModel()
+
+        df = garch.fit_predict(df)
+
+        # fallback if NaN
+        df["garch_vol"] = df["garch_vol"].fillna(df["volatility_10"])
+
+        # volatility change
+        df["garch_vol_change"] = df["garch_vol"] - df["volatility_10"]
+
+        # volatility ratio
+        df["vol_ratio"] = df["garch_vol"] / (df["volatility_10"] + 1e-9)        
+
     df = df.replace([np.inf, -np.inf], np.nan)
     df = df.dropna().reset_index(drop=False)
+    
     df['date'] = pd.to_datetime(df['date'])
     #print(df.info())
     return df

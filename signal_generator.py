@@ -9,8 +9,8 @@ def hmm_xgb_pipeline(train_df, test_df, params):
 
     feature_config = params.get("feature_config", {})
 
-    train_df = add_select_features(train_df, feature_config)
-    test_df = add_select_features(test_df, feature_config)
+    #train_df = add_select_features(train_df, feature_config)
+    #test_df = add_select_features(test_df, feature_config)
 
     hmm = HMMModel(n_components=params.get("n_components", 2))
     hmm.fit(train_df)

@@ -43,31 +43,62 @@ df["volatility_10"] = pd.to_numeric(df["volatility_10"], errors="coerce")
 validate_dataframe(df, "input data")
 
 wf = WalkForward(
-    train_size=500,
+    train_size=200,
     test_size=100,
     step_size=100
 )
 
 params = {
-    "n_components": 3,
-    "covariance_type": "full",
-    "xgb_params": {
-        "max_depth": 5,
-        "learning_rate": 0.1
-    }
+    "n_components": 2,
+    "long_threshold": 0.64,
+    "short_threshold": 0.36,
+    "xgb_params": {"max_depth": 5, "learning_rate": 0.05},
+    "feature_config":{"returns": True, "momentum": True},
+    "covariance_type": "diag"
 }
 
 result = wf.run(
-    df=df,
+    df=df.tail(900),
     pipeline_fn=hmm_xgb_pipeline, #hmm_pipeline
     params=params
 )
 
-metrics = result[0]["metrics"]
-score = compute_score(metrics)
 
-print("Metrics:", metrics)
-print("Score:", score)
+metrics = None
+full_data = None
+i = 0
+for r in result:
+    if i == 0:
+        row = {
+            **r["metrics"],
+            **r["feature_importance"],
+            "score": r["score"]
+        }
+        metrics = pd.DataFrame([row])
+    else:
+        row = {
+            **r["metrics"],
+            **r["feature_importance"],
+            "score": r["score"]
+        }
+        dr = pd.DataFrame([row])
+        metrics = pd.concat([metrics, dr], ignore_index=True)
+    i+=1
+
+#metrics = result[0]["metrics"]
+#score = compute_score(metrics)
+
+full_data = result[len(result)-1]["full_data"]
+
+#print("Metrics:", metrics)
+#print("Score:", score)
+
+time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+full_data_file = f"results/full_data_{time_stamp}.csv"
+metrics_file = f"results/metrics_data_{time_stamp}.csv"
+
+full_data.to_csv(full_data_file, index=False)
+metrics.to_csv(metrics_file, index=False)
 
 # df_plot = result["full_data"].copy()
 # time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")

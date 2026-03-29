@@ -1,3 +1,5 @@
+import numpy as np
+
 def compute_score(metrics):
 
     score = (
@@ -11,5 +13,8 @@ def compute_score(metrics):
     # penalize low trades
     if metrics["num_trades"] < 10:
         score *= 0.5
+    
+    if np.isinf(score):
+        score = 0
 
     return score

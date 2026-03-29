@@ -9,7 +9,7 @@ class HMMModel:
         self.scaler = StandardScaler()
 
     def _prepare_features(self, df):
-        cols = ["return_1", "volatility_10", "momentum_5", "zscore"]
+        cols = ["return_1", "volatility_10", "momentum_5", "zscore", "garch_vol"]
         cols = [c for c in cols if c in df.columns]
 
         X = df[cols].dropna()
