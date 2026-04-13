@@ -44,16 +44,16 @@ class GARCHModel:
         """
         df = df.copy()
 
-        returns = df["return_1"].dropna()
+        returns = df["f_fut_return_1"].dropna()
 
         if len(returns) < 50:
-            df["garch_vol"] = np.nan
+            df["f_fut_garch_vol"] = np.nan
             return df
 
         self.fit(returns)
 
         vol = self.forecast()[0]
 
-        df["garch_vol"] = vol
+        df["f_fut_garch_vol"] = vol
 
         return df

@@ -3,7 +3,7 @@ import numpy as np
 def compute_brier_score(df):
     df = df.copy()
 
-    df["actual"] = (df["return_1"].shift(-1) > 0).astype(int)
+    df["actual"] = (df["f_return_1"].shift(-1) > 0).astype(int)
 
     df = df.dropna()
 
@@ -13,7 +13,7 @@ def compute_brier_score(df):
 
 def compute_metrics(df, trades):
 
-    returns = df["return_1"] * df["position"]
+    returns = df["f_return_1"] * df["position"]
 
     # --- Sharpe ---
     sharpe = np.sqrt(252) * returns.mean() / (returns.std() + 1e-9)
@@ -37,6 +37,10 @@ def compute_metrics(df, trades):
 
     # --- Calmar ---
     calmar = cagr / abs(max_drawdown) if max_drawdown != 0 else 0
+
+    if abs(max_drawdown) < 1e-4:
+        calmar = 0
+    
 
     # --- Profit Factor ---
     profits = trades[trades > 0].sum()

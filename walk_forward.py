@@ -22,7 +22,8 @@ class WalkForward:
             raise ValueError("Not enough data for training")
         
         i = 0
-        df["date"] = pd.to_datetime(df["date"], format="%d-%m-%Y")
+        if 'date' in df.columns and df['date'].dtype == 'str':
+            df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d")
 
         while i < n - self.train_size:
 
@@ -32,8 +33,8 @@ class WalkForward:
             test_start = train_end
             test_end = min(train_end + self.test_size, n)  # <-- FIX
 
-            train = df.iloc[train_start:train_end]
-            test = df.iloc[test_start:test_end]
+            train = df.iloc[train_start:train_end].copy()
+            test = df.iloc[test_start:test_end].copy()
 
             if len(test) == 0:
                 break

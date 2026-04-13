@@ -21,10 +21,10 @@ class XGBoostModel:
     def prepare_data(self, df):
         df = df.copy()
 
-        df["target"] = (df["return_1"].shift(-1) > 0).astype(int)
+        df["target"] = (df["f_return_1"].shift(-1) > 0).astype(int)
         df = df.dropna()
 
-        exclude = ["index", "date", "target", "signal", "regime", "state", "position", "trade_signal"]
+        exclude = ["index", "date", "fut_expiry", "target", "signal", "regime", "state", "position", "trade_signal", "mtype", "runno"]
 
         features = [c for c in df.columns if c not in exclude and df[c].dtype != "object"]
         #print(f"Features in XGB: {features}")

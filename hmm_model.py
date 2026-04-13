@@ -9,10 +9,13 @@ class HMMModel:
         self.scaler = StandardScaler()
 
     def _prepare_features(self, df):
-        cols = ["return_1", "volatility_10", "momentum_5", "zscore", "garch_vol"]
+        cols = df.filter(like='f_')
         cols = [c for c in cols if c in df.columns]
+    
+        #print(f"hmm records for train: {len(df)} and columns: {cols}")
 
         X = df[cols].dropna()
+        #print(f"hmm records for train: {len(df)} and columns: {cols}")
         X_scaled = self.scaler.fit_transform(X.values)
 
         return X_scaled, X.index
@@ -41,7 +44,7 @@ class HMMModel:
         mapping = {}
 
         for state in range(self.n_components):
-            avg_return = df[df["state"] == state]["return_1"].mean()
+            avg_return = df[df["state"] == state]["f_return_1"].mean()
 
             if avg_return > 0:
                 mapping[state] = "bull"

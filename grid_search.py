@@ -38,6 +38,6 @@ class GridSearchOptimizer:
         
         time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         full_data_file = f"results/full_data_{time_stamp}.csv"
-        df_fd.to_csv(full_data_file, index=False)
+        #df_fd.to_csv(full_data_file, index=False) - # if raw data is needed
 
             
